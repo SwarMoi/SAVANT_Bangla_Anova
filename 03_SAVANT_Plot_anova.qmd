@@ -1,0 +1,158 @@
+---
+title: "SAVANT_PLOT_Anova"
+editor: visual
+format:
+  html:
+    code-fold: true
+    code-tools: true
+---
+
+```{r}
+library(tidyverse)
+library(lme4)
+library(emmeans)
+library(sjPlot)
+#library(plyr)
+library(plotrix)
+library(ggpubr)
+library(gridExtra)
+library(grid)
+library(ggthemes)
+# source('Themes.R')
+```
+
+# Import and preporcess data
+
+```{r}
+X <- tribble(
+  ~Prefix, ~Condition, ~PrefixType,
+  "CatViolDU", "CatViol", "DU", 
+  "CatViolPROTI", "CatViol","PROTI", 
+  "GrammDU", "Gramm","DU",
+  "GrammPROTI", "Gramm","PROTI",
+  "SemViolDU", "SemViol","DU",
+  "SemViolPROTI", "SemViol","PROTI",
+  "Filler", "Filler","Fill",
+)
+```
+
+```{r}
+RH_Temporal <- read_csv("SAVANT/CatViol_RH_244-286_p0.0197.csv", col_names = c("Participant", "Prefix","hemi", "dSPM"))
+RH_Temporal = RH_Temporal %>% left_join(X)
+
+RH_Temporal <- RH_Temporal %>% select(!hemi)  %>% group_by(Condition) %>% summarise(SE = std.error(dSPM),
+                    dSPM = mean(dSPM))
+
+RH_Temporal_TC <- read_csv("SAVANT/TC_CatViol_RH_244-286_p0.0197.csv", col_names = c("time", "Participant", "Prefix","hemi", "dSPM"))
+RH_Temporal_TC = RH_Temporal_TC %>% left_join(X)
+
+RH_Temporal_TC$time = RH_Temporal_TC$time*1000
+
+RH_Temporal_TC <- RH_Temporal_TC %>% filter(between(time, 244, 286)) %>% group_by(Condition) %>% summarise(SE = std.error(dSPM),
+                    dSPM = mean(dSPM))
+
+
+# RH_temporal_plot <- 
+#   ggplot(data =aes(x=Condition, y=dSPM)) + 
+#       geom_bar(stat="identity")
+
+RH_temporal_plot <- RH_Temporal %>% filter(Condition != "Filler")  %>% ggplot(aes(x=Condition,y=dSPM,fill=Condition)) +
+  # geom_bar function is used to plot bars of barplot
+  geom_bar(stat = "identity", width = 0.95, position = position_dodge(0.1), show.legend = FALSE  )+
+  #scale_x_discrete(limits = Conditions) +  facet_wrap( ~Prefix) +
+  ylab("dSPM") + 
+  xlab("Conditions") +
+  scale_fill_manual(values = c("blue" , "green" ,"red"))+
+   geom_errorbar(aes(ymin=dSPM-SE,
+                    ymax=dSPM+SE,
+                 width=0.3))+ 
+  theme_minimal() +
+  theme(axis.text.x = element_text(size = 15, angle = 0, hjust = .5, vjust = .5, face = "plain"),
+        axis.text.y = element_text(size = 15, angle = 0, hjust = 1, vjust = 0, face = "plain"),  
+        axis.title.x = element_text(size = 18, angle = 0, hjust = .5, vjust = 0, face = "plain"),
+        axis.title.y = element_text(size = 18, angle = 90, hjust = .5, vjust = .5, face = "plain"))
+
+RH_temporal_plot
+
+```
+
+```{r}
+
+LH_OF <- read_csv("SAVANT/OF_LH_424-452_p0.0472.csv", col_names = c("Participant", "Prefix","hemi", "dSPM"))
+LH_OF = LH_OF %>% left_join(X)
+
+LH_OF <- LH_OF %>% select(!hemi)  %>% group_by(Condition,Prefix, PrefixType) %>% summarise(SE = std.error(dSPM),
+                    dSPM = mean(dSPM))
+
+LH_OF_TC <- read_csv("SAVANT/TC_OF_LH_424-452_p0.0472.csv", col_names = c("time", "Participant", "Prefix","hemi", "dSPM"))
+LH_OF_TC = LH_OF_TC %>% left_join(X)
+
+LH_OF_TC$time = LH_OF_TC$time*1000
+
+LH_OF_TC <- LH_OF_TC %>% filter(between(time, 424, 452)) %>% group_by(Condition, Prefix, PrefixType) %>% summarise(SE = std.error(dSPM),
+                    dSPM = mean(dSPM))
+
+
+# RH_temporal_plot <- 
+#   ggplot(data =aes(x=Condition, y=dSPM)) + 
+#       geom_bar(stat="identity")
+
+LH_OF_plot <- LH_OF %>% filter(Condition != "Filler")  %>% ggplot(aes(x=Condition,y=dSPM,fill=Condition)) +
+  # geom_bar function is used to plot bars of barplot
+  geom_bar(stat = "identity", width = 0.99, position = position_dodge(0.1), show.legend = FALSE  )+
+  #scale_x_discrete(limits = Conditions) +  facet_wrap( ~Prefix) +
+  ylab("dSPM") + 
+  xlab("Conditions") +
+  facet_wrap(~PrefixType) +
+  # scale_fill_manual(values = c("blue", "lightblue" , "green", "lightgreen" ,"red", "pink"))+
+   scale_fill_manual(values = c("blue",  "green","red"))+
+   geom_errorbar(aes(ymin=dSPM-SE,
+                    ymax=dSPM+SE,
+                 width=0.3))+ 
+  theme_minimal() +
+  theme(axis.text.x = element_text(size = 10, angle = 0, hjust = .5, vjust = .5, face = "plain"),
+        axis.text.y = element_text(size = 15, angle = 0, hjust = 1, vjust = 0, face = "plain"),  
+        axis.title.x = element_text(size = 18, angle = 0, hjust = .5, vjust = 0, face = "plain"),
+        axis.title.y = element_text(size = 18, angle = 90, hjust = .5, vjust = .5, face = "plain"))
+
+LH_OF_plot
+```
+
+```{r}
+LH_OF_early  <- read_csv("SAVANT/CatViol_LH_earlyOF_238-279_p0.0049.csv", col_names = c("Participant", "Prefix","hemi", "dSPM"))
+LH_OF_early = LH_OF_early %>% left_join(X)
+
+LH_OF_early <- LH_OF_early %>% select(!hemi)  %>% group_by(Condition) %>% summarise(SE = std.error(dSPM),
+                    dSPM = mean(dSPM))
+
+LH_OF_early_TC <- read_csv("SAVANT/TC_CatViol_LH_earlyOF_238-279_p0.0049.csv", col_names = c("time", "Participant", "Prefix","hemi", "dSPM"))
+LH_OF_early_TC = LH_OF_early_TC %>% left_join(X)
+
+LH_OF_early_TC$time = LH_OF_early_TC$time*1000
+
+LH_OF_early_TC <- LH_OF_early_TC %>% filter(between(time, 238, 279)) %>% group_by(Condition) %>% summarise(SE = std.error(dSPM),
+                    dSPM = mean(dSPM))
+
+
+# RH_temporal_plot <- 
+#   ggplot(data =aes(x=Condition, y=dSPM)) + 
+#       geom_bar(stat="identity")
+
+LH_OF_early_plot <- LH_OF_early %>% filter(Condition != "Filler")  %>% ggplot(aes(x=Condition,y=dSPM,fill=Condition)) +
+  # geom_bar function is used to plot bars of barplot
+  geom_bar(stat = "identity", width = 0.95, position = position_dodge(0.1), show.legend = FALSE  )+
+  #scale_x_discrete(limits = Conditions) +  facet_wrap( ~Prefix) +
+  ylab("dSPM") + 
+  xlab("Conditions") +
+  scale_fill_manual(values = c("blue" , "green" ,"red"))+
+   geom_errorbar(aes(ymin=dSPM-SE,
+                    ymax=dSPM+SE,
+                 width=0.3))+ 
+  theme_minimal() +
+  theme(axis.text.x = element_text(size = 15, angle = 0, hjust = .5, vjust = .5, face = "plain"),
+        axis.text.y = element_text(size = 15, angle = 0, hjust = 1, vjust = 0, face = "plain"),  
+        axis.title.x = element_text(size = 18, angle = 0, hjust = .5, vjust = 0, face = "plain"),
+        axis.title.y = element_text(size = 18, angle = 90, hjust = .5, vjust = .5, face = "plain"))
+
+LH_OF_early_plot
+```
