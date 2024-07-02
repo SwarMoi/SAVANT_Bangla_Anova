@@ -21,8 +21,6 @@ library(ggthemes)
 # source('Themes.R')
 ```
 
-# Import and preporcess data
-
 ```{r}
 X <- tribble(
   ~Prefix, ~Condition, ~PrefixType,
