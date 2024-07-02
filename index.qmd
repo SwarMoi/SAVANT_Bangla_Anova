@@ -1,6 +1,11 @@
 ---
 title: "SAVANT_PLOT_Anova"
-editor: visual
+execute:
+  echo: true
+  error: false
+  warning: false
+  cache: true
+theme: sketchy  
 format:
   html:
     code-fold: true
@@ -34,13 +39,12 @@ X <- tribble(
 )
 ```
 
+# RH_TemporalLobe_244-286_p0.0197
+
 ```{r}
 RH_Temporal <- read_csv("SAVANT/CatViol_RH_244-286_p0.0197.csv", col_names = c("Participant", "Prefix","hemi", "dSPM"))
 RH_Temporal = RH_Temporal %>% left_join(X)
-
-RH_Temporal <- RH_Temporal %>% select(!hemi)  %>% group_by(Condition) %>% summarise(SE = std.error(dSPM),
-                    dSPM = mean(dSPM))
-
+RH_Temporal <- RH_Temporal %>% select(!hemi)  %>% group_by(Condition) %>% summarise(SE = std.error(dSPM),dSPM = mean(dSPM))
 RH_Temporal_TC <- read_csv("SAVANT/TC_CatViol_RH_244-286_p0.0197.csv", col_names = c("time", "Participant", "Prefix","hemi", "dSPM"))
 RH_Temporal_TC = RH_Temporal_TC %>% left_join(X)
 
@@ -48,11 +52,6 @@ RH_Temporal_TC$time = RH_Temporal_TC$time*1000
 
 RH_Temporal_TC <- RH_Temporal_TC %>% filter(between(time, 244, 286)) %>% group_by(Condition) %>% summarise(SE = std.error(dSPM),
                     dSPM = mean(dSPM))
-
-
-# RH_temporal_plot <- 
-#   ggplot(data =aes(x=Condition, y=dSPM)) + 
-#       geom_bar(stat="identity")
 
 RH_temporal_plot <- RH_Temporal %>% filter(Condition != "Filler")  %>% ggplot(aes(x=Condition,y=dSPM,fill=Condition)) +
   # geom_bar function is used to plot bars of barplot
@@ -74,26 +73,20 @@ RH_temporal_plot
 
 ```
 
+# LH OF 424-452_p0.0472
+
 ```{r}
 
 LH_OF <- read_csv("SAVANT/OF_LH_424-452_p0.0472.csv", col_names = c("Participant", "Prefix","hemi", "dSPM"))
 LH_OF = LH_OF %>% left_join(X)
-
 LH_OF <- LH_OF %>% select(!hemi)  %>% group_by(Condition,Prefix, PrefixType) %>% summarise(SE = std.error(dSPM),
                     dSPM = mean(dSPM))
-
 LH_OF_TC <- read_csv("SAVANT/TC_OF_LH_424-452_p0.0472.csv", col_names = c("time", "Participant", "Prefix","hemi", "dSPM"))
 LH_OF_TC = LH_OF_TC %>% left_join(X)
-
 LH_OF_TC$time = LH_OF_TC$time*1000
-
 LH_OF_TC <- LH_OF_TC %>% filter(between(time, 424, 452)) %>% group_by(Condition, Prefix, PrefixType) %>% summarise(SE = std.error(dSPM),
                     dSPM = mean(dSPM))
 
-
-# RH_temporal_plot <- 
-#   ggplot(data =aes(x=Condition, y=dSPM)) + 
-#       geom_bar(stat="identity")
 
 LH_OF_plot <- LH_OF %>% filter(Condition != "Filler")  %>% ggplot(aes(x=Condition,y=dSPM,fill=Condition)) +
   # geom_bar function is used to plot bars of barplot
@@ -116,25 +109,19 @@ LH_OF_plot <- LH_OF %>% filter(Condition != "Filler")  %>% ggplot(aes(x=Conditio
 LH_OF_plot
 ```
 
+# LH_OF Early (238-279_p0.0049)
+
 ```{r}
 LH_OF_early  <- read_csv("SAVANT/CatViol_LH_earlyOF_238-279_p0.0049.csv", col_names = c("Participant", "Prefix","hemi", "dSPM"))
 LH_OF_early = LH_OF_early %>% left_join(X)
 
 LH_OF_early <- LH_OF_early %>% select(!hemi)  %>% group_by(Condition) %>% summarise(SE = std.error(dSPM),
                     dSPM = mean(dSPM))
-
 LH_OF_early_TC <- read_csv("SAVANT/TC_CatViol_LH_earlyOF_238-279_p0.0049.csv", col_names = c("time", "Participant", "Prefix","hemi", "dSPM"))
 LH_OF_early_TC = LH_OF_early_TC %>% left_join(X)
-
 LH_OF_early_TC$time = LH_OF_early_TC$time*1000
-
 LH_OF_early_TC <- LH_OF_early_TC %>% filter(between(time, 238, 279)) %>% group_by(Condition) %>% summarise(SE = std.error(dSPM),
                     dSPM = mean(dSPM))
-
-
-# RH_temporal_plot <- 
-#   ggplot(data =aes(x=Condition, y=dSPM)) + 
-#       geom_bar(stat="identity")
 
 LH_OF_early_plot <- LH_OF_early %>% filter(Condition != "Filler")  %>% ggplot(aes(x=Condition,y=dSPM,fill=Condition)) +
   # geom_bar function is used to plot bars of barplot
