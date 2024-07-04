@@ -37,6 +37,8 @@ X <- tribble(
   "SemViolPROTI", "SemViol","PROTI",
   "Filler", "Filler","Fill",
 )
+
+level_order <- c('Gramm', 'CatViol', 'SemViol')
 ```
 
 # RH_TemporalLobe_244-286_p0.0197
