@@ -55,7 +55,7 @@ RH_Temporal_TC$time = RH_Temporal_TC$time*1000
 RH_Temporal_TC <- RH_Temporal_TC %>% filter(between(time, 244, 286)) %>% group_by(Condition) %>% summarise(SE = std.error(dSPM),
                     dSPM = mean(dSPM))
 
-RH_temporal_plot <- RH_Temporal %>% filter(Condition != "Filler")  %>% ggplot(aes(x=Condition,y=dSPM,fill=Condition)) +
+RH_temporal_plot <- RH_Temporal %>% filter(Condition != "Filler")  %>% ggplot(aes(x= factor(Condition, level = level_order),y=dSPM,fill=Condition)) +
   # geom_bar function is used to plot bars of barplot
   geom_bar(stat = "identity", width = 0.95, position = position_dodge(0.1), show.legend = FALSE  )+
   #scale_x_discrete(limits = Conditions) +  facet_wrap( ~Prefix) +
@@ -90,7 +90,7 @@ LH_OF_TC <- LH_OF_TC %>% filter(between(time, 424, 452)) %>% group_by(Condition,
                     dSPM = mean(dSPM))
 
 
-LH_OF_plot <- LH_OF %>% filter(Condition != "Filler")  %>% ggplot(aes(x=Condition,y=dSPM,fill=Condition)) +
+LH_OF_plot <- LH_OF %>% filter(Condition != "Filler")  %>% ggplot(aes(x= factor(Condition, level = level_order),y=dSPM,fill=Condition)) +
   # geom_bar function is used to plot bars of barplot
   geom_bar(stat = "identity", width = 0.99, position = position_dodge(0.1), show.legend = FALSE  )+
   #scale_x_discrete(limits = Conditions) +  facet_wrap( ~Prefix) +
@@ -103,7 +103,7 @@ LH_OF_plot <- LH_OF %>% filter(Condition != "Filler")  %>% ggplot(aes(x=Conditio
                     ymax=dSPM+SE,
                  width=0.3))+ 
   theme_minimal() +
-  theme(axis.text.x = element_text(size = 10, angle = 0, hjust = .5, vjust = .5, face = "plain"),
+  theme(axis.text.x = element_text(size = 18, angle = 0, hjust = .5, vjust = .5, face = "plain"),
         axis.text.y = element_text(size = 15, angle = 0, hjust = 1, vjust = 0, face = "plain"),  
         axis.title.x = element_text(size = 18, angle = 0, hjust = .5, vjust = 0, face = "plain"),
         axis.title.y = element_text(size = 18, angle = 90, hjust = .5, vjust = .5, face = "plain"))
@@ -125,7 +125,7 @@ LH_OF_early_TC$time = LH_OF_early_TC$time*1000
 LH_OF_early_TC <- LH_OF_early_TC %>% filter(between(time, 238, 279)) %>% group_by(Condition) %>% summarise(SE = std.error(dSPM),
                     dSPM = mean(dSPM))
 
-LH_OF_early_plot <- LH_OF_early %>% filter(Condition != "Filler")  %>% ggplot(aes(x=Condition,y=dSPM,fill=Condition)) +
+LH_OF_early_plot <- LH_OF_early %>% filter(Condition != "Filler")  %>% ggplot(aes(x= factor(Condition, level = level_order),y=dSPM,fill=Condition)) +
   # geom_bar function is used to plot bars of barplot
   geom_bar(stat = "identity", width = 0.95, position = position_dodge(0.1), show.legend = FALSE  )+
   #scale_x_discrete(limits = Conditions) +  facet_wrap( ~Prefix) +
